@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="ImageResize.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:ImageResize.Controls">
+
+    <Grid>
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.ThemeDictionaries>
+                    <!-- 浅色：浅灰画布 + 深色文字；深色：#141414（保持参考应用的观感） -->
+                    <ResourceDictionary x:Key="Light">
+                        <SolidColorBrush x:Key="CanvasBrush" Color="#F2F3F7"/>
+                    </ResourceDictionary>
+                    <ResourceDictionary x:Key="Dark">
+                        <SolidColorBrush x:Key="CanvasBrush" Color="#141414"/>
+                    </ResourceDictionary>
+                </ResourceDictionary.ThemeDictionaries>
+            </ResourceDictionary>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 顶栏：标题 + 打开 / 保存 -->
+        <Grid Grid.Row="0" Padding="16,10,16,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="图片工具" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button x:Name="BtnPick" Content="选择图片" Click="BtnPick_Click"/>
+                <Button x:Name="BtnSave" Content="保存" Style="{ThemeResource AccentButtonStyle}"
+                        Click="BtnSave_Click" IsEnabled="False"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- 画布：图片 + 裁剪覆盖层 + 空态提示 + 忙碌指示 -->
+        <Grid x:Name="CanvasHost" Grid.Row="1" Margin="16,8,16,8"
+              Background="{ThemeResource CanvasBrush}"
+              AllowDrop="True"
+              DragOver="CanvasHost_DragOver"
+              Drop="CanvasHost_Drop"
+              SizeChanged="CanvasHost_SizeChanged">
+            <Image x:Name="ImageCtrl" Stretch="Uniform"/>
+            <controls:CropOverlay x:Name="CropOverlay" Visibility="Collapsed"/>
+            <TextBlock x:Name="EmptyHint" Text="请选择一张图片开始"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+            <ProgressRing x:Name="BusyRing" Width="48" Height="48"
+                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                          IsActive="False" Visibility="Collapsed"/>
+        </Grid>
+
+        <!-- 底部面板：反馈 / 信息行 / 模式与操作 -->
+        <Border Grid.Row="2" Padding="16,10,16,12"
+                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="0,1,0,0">
+            <StackPanel Spacing="8">
+                <InfoBar x:Name="Feedback" IsOpen="False"/>
+                <TextBlock x:Name="InfoText" FontSize="12" TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Text="请选择一张图片开始"/>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <RadioButton x:Name="ModeCrop" Content="剪裁" GroupName="Mode" MinWidth="76"
+                                 Checked="Mode_Checked"/>
+                    <RadioButton x:Name="ModeResize" Content="缩放" GroupName="Mode" MinWidth="76"
+                                 Checked="Mode_Checked"/>
+                    <Border Width="1" Height="30" Margin="4,0"
+                            Background="{ThemeResource DividerStrokeColorDefaultBrush}"/>
+
+                    <!-- 剪裁子面板 -->
+                    <StackPanel x:Name="CropControls" Orientation="Horizontal" Spacing="8"
+                                Visibility="Collapsed">
+                        <Button x:Name="BtnFull" Content="全图" Click="BtnFull_Click" IsEnabled="False"/>
+                        <Button x:Name="BtnApplyCrop" Content="应用剪裁" Style="{ThemeResource AccentButtonStyle}"
+                                Click="BtnApplyCrop_Click" IsEnabled="False"/>
+                    </StackPanel>
+
+                    <!-- 缩放子面板 -->
+                    <StackPanel x:Name="ResizeControls" Orientation="Horizontal" Spacing="8"
+                                Visibility="Collapsed" VerticalAlignment="Center">
+                        <Slider x:Name="PercentSlider" Width="220" Minimum="10" Maximum="100"
+                                SnapsTo="StepValues" StepFrequency="1" Value="50"
+                                ValueChanged="PercentSlider_ValueChanged"
+                                IsEnabled="False"/>
+                        <TextBlock x:Name="PercentText" Text="50%" FontSize="16" MinWidth="46"
+                                   TextAlignment="Center" VerticalAlignment="Center"/>
+                        <Button x:Name="Btn25" Content="25%" Tag="25" Click="BtnQuick_Click" IsEnabled="False"/>
+                        <Button x:Name="Btn50" Content="50%" Tag="50" Click="BtnQuick_Click" IsEnabled="False"/>
+                        <Button x:Name="Btn75" Content="75%" Tag="75" Click="BtnQuick_Click" IsEnabled="False"/>
+                        <Button x:Name="BtnApplyResize" Content="应用缩放" Style="{ThemeResource AccentButtonStyle}"
+                                Click="BtnApplyResize_Click" IsEnabled="False"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
