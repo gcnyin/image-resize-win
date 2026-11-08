@@ -47,6 +47,8 @@ public sealed partial class MainWindow : Window
                     presenter.PreferredMinimumWidth = (int)(860 * scale);
                     presenter.PreferredMinimumHeight = (int)(620 * scale);
                 }
+                // 标题栏图标（单文件发布时随内容解压到 BaseDirectory）
+                AppWindow.SetIcon(System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "AppIcon.ico"));
             }
             catch
             {

@@ -177,8 +177,9 @@ public sealed class CropOverlay : Grid
         corner.Visibility = Visibility.Visible;
         corner.Points = new PointCollection
         {
-            new(x, y),
+            // 角点必须在中间：横臂 → 角 → 竖臂，否则会连出斜边
             new(x + dx, y),
+            new(x, y),
             new(x, y + dy),
         };
     }
